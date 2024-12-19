@@ -10,7 +10,7 @@ COPY . .
 
 RUN go build -o main .
 
-FROM istio/distroless/base
+FROM gcr.io/distroless/base
 
 COPY --from=base /app/main .
 
