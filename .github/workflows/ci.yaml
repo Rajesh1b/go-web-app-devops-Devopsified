@@ -22,22 +22,30 @@ jobs:
       with:
         go-version: 1.21.10
 
+    - name: Check Go version
+      run: go version  # Verifies the Go version used
+
+    - name: Clear Go Cache (optional but recommended)
+      run: |
+        rm -rf ~/.cache/go-build
+        rm -rf ~/.go/pkg/mod
+
+    - name: Cache Go modules
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/.golangci-lint-cache
+        key: go-${{ runner.os }}-go-${{ hashFiles('**/go.mod') }}-v2
+        restore-keys: |
+          go-${{ runner.os }}-go-
+
     - name: Build
       run: go build -o go-web-app
 
     - name: Test
       run: go test ./...
-      
-    - name: Cache Go modules
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/.golangci-lint-cache
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.mod') }}-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-go-    
-      
+        
       
   code-quality:
     runs-on: ubuntu-latest
